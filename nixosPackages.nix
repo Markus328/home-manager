@@ -1,26 +1,5 @@
-{ pkgs, t64gram, ... }:
-{
+{ pkgs, t64gram, ... }: {
 
-  home.username = "markus";
-  home.homeDirectory = "/home/markus";
-  home.stateVersion = "22.11";
-
-  programs.home-manager.enable = true;
-  home.pointerCursor = {
-    name = "breeze_cursors";
-    package = pkgs.breeze-icons;
-  };
-  gtk = {
-    enable = true;
-    cursorTheme = {
-      name = "breeze_cursors";
-      package = pkgs.breeze-icons;
-    };
-    theme = {
-      name = "Breeze";
-      package = pkgs.breeze-gtk;
-    };
-  };
   nixpkgs.overlays = [
     (self: super: {
       waybar = super.waybar.overrideAttrs (oldAttrs: {
@@ -50,7 +29,5 @@
     cargo
     rnix-lsp
     nodejs
-
   ];
-
 }
