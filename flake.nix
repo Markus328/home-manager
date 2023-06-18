@@ -8,20 +8,38 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     t64gram = {
-      url = "github:Markus328/64gram-desktop-bin";
+      url = "github:Markus328/64gram-desktop-bin/no-fhs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixGL = {
+      url = "github:guibou/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = inputs: {
     defaultPackage.x86_64-linux = inputs.home-manager.defaultPackage.x86_64-linux;
-
-    homeConfigurations = {
+    homeManagerModules.mod = {...}: {
+      imports = [./modules];
+    };
+    homeConfigurations = let
+      pkgs = import inputs.nixpkgs {
+        system = "x86_64-linux";
+        overlays = [
+          inputs.nixGL.overlay
+          inputs.t64gram.overlay
+        ];
+      };
+      baseModules = [./home.nix ./modules/flatpak-themes.nix];
+    in {
       "markus@arch-desktop" = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { t64gram = inputs.t64gram.defaultPackage.x86_64-linux; };
-        modules = [ ./home.nix ];
+        inherit pkgs;
+        modules = baseModules ++ [./modules/archConfig.nix];
+      };
+      "markus@nixos-desktop" = inputs.home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = baseModules ++ [./modules/nixosConfig.nix];
       };
     };
   };
 }
-
