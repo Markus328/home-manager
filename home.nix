@@ -14,6 +14,7 @@
   home.packages = with pkgs; [
     t64gram
     tmux
+    zathura
 
     #Neovim
     # cargo
